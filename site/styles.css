@@ -338,3 +338,72 @@ h1 {
   margin-left: auto;
   text-align: right;
 }
+
+.contents-plain,
+.sub-contents {
+  list-style: none;
+}
+
+.book-contents .contents-plain {
+  padding-left: 0;
+}
+
+.sub-contents {
+  padding-left: 1.5rem;
+}
+
+.article-prose blockquote {
+  margin: 1.5em 0;
+  padding: 0.1em 0 0.1em 1.25rem;
+  border-left: 4px solid #7893aa;
+  color: #2f506b;
+}
+
+.article-prose hr {
+  margin: 2.5em 0;
+  border: 0;
+  border-top: 1px solid #dedbd2;
+}
+
+.site-footer {
+  padding-block: 2rem 1.5rem;
+}
+
+.footer-cols {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 2rem;
+}
+
+.site-footer h2 {
+  margin: 0 0 0.5rem;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.15rem;
+  color: #292d33;
+}
+
+.site-footer h3 {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #292d33;
+}
+
+.site-footer ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  line-height: 1.9;
+}
+
+.footer-bottom {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.5rem 1.5rem;
+  margin-top: 1.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid #dedbd2;
+  font-size: 0.9rem;
+}
