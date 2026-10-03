@@ -407,3 +407,45 @@ h1 {
   border-top: 1px solid #dedbd2;
   font-size: 0.9rem;
 }
+
+.article-prose .note {
+  margin: 1.25em 0 1.25em 1rem;
+  padding-left: 1rem;
+  border-left: 3px solid #c8d3dd;
+  color: #4d535b;
+  font-size: 0.95em;
+}
+
+.article-prose .callout {
+  margin: 1.5em 0;
+  padding: 0.85rem 1.1rem;
+  border-left: 4px solid #345a78;
+  background: #eee9dc;
+}
+
+.article-prose .indent {
+  margin-left: 1.5rem;
+}
+
+.article-prose .reference {
+  margin-left: 1.5rem;
+  text-indent: -1.5rem;
+  font-size: 0.95em;
+}
+
+.article-prose .divider {
+  margin: 2.5em 0;
+  text-align: center;
+  letter-spacing: 0.5em;
+  color: #7893aa;
+}
+
+.article-prose h4 {
+  margin: 1.75em 0 0.5em;
+  font-size: 1.05em;
+}
+
+.article-contents .contents-plain {
+  padding-left: 0;
+}
+
