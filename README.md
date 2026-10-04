@@ -31,6 +31,10 @@ The inbox and archive are excluded from Git. The tracker records preparation and
 
 `content/` is the site build's input and may hold prepared pages while they await your review. Do not commit or push unapproved material; only explicitly approved pages may be published. Book folders also contain instruction files, which the deployment workflow excludes from the generated site. Use the source outlines in `templates/` when preparing book and chapter pages. The source-side workflow in `Bible_Projects` may also sync selected files into `content/`; see [SOURCE-SETUP.md](SOURCE-SETUP.md).
 
+## Book presentation overrides
+
+Each book's `README.md` has a **Site presentation overrides** section with three fields: `TITLE`, `SUBTITLE` and `DESCRIPTION`. When a field is filled, the next build uses it in place of the current title (opening page, Home card), subtitle (opening page) and short description (Home card). Blank fields change nothing. Overrides are applied during preparation or on request, and recorded in `PUBLICATION-TRACKER.md`.
+
 ## Activity history
 
 Append each event to [PUBLICATION-TRACKER.md](PUBLICATION-TRACKER.md) in date order. Preparation entries identify the book, source files, destination pages, and archive location. Publication entries identify the approved pages and the deployment date or run when known. Never record that something was published merely because it was prepared.
