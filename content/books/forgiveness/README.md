@@ -9,8 +9,8 @@ No book-specific editorial, formatting, translation, or citation rules have been
 <!-- SITE-PRESENTATION: read by the site build. Fill a line to replace the current value; leave it blank to keep the current one. -->
 
 - **TITLE:** 
-- **SUBTITLE:** 
-- **DESCRIPTION:** 
+- **SUBTITLE:** A journey from struggle to strength
+- **DESCRIPTION:** Forgiveness cuts deep.  This study start with a summary and include a deep dive into what human sciences and scripture make of it and offers hope
 
 Current values (for reference, set by the build when a field above is blank):
 

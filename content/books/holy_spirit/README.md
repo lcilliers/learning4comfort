@@ -9,8 +9,8 @@ No book-specific editorial, formatting, translation, or citation rules have been
 <!-- SITE-PRESENTATION: read by the site build. Fill a line to replace the current value; leave it blank to keep the current one. -->
 
 - **TITLE:** 
-- **SUBTITLE:** 
-- **DESCRIPTION:** 
+- **SUBTITLE:** The Origin, Nature, Work, Character, and Interaction of the Holy Spirit
+- **DESCRIPTION:** A Five-Thousand-Year Investigation from Genesis to the Present Day of the Holy Spirit as expressed in Scripture and historical records
 
 Current values (for reference, set by the build when a field above is blank):
 

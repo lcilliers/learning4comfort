@@ -8,9 +8,9 @@ No book-specific editorial, formatting, translation, or citation rules have been
 
 <!-- SITE-PRESENTATION: read by the site build. Fill a line to replace the current value; leave it blank to keep the current one. -->
 
-- **TITLE:** 
-- **SUBTITLE:** 
-- **DESCRIPTION:** 
+- **TITLE:** The expression of God
+- **SUBTITLE:** Is God's Word just words
+- **DESCRIPTION:** The Significance of God’s Word and Its Personification in Jesus
 
 Current values (for reference, set by the build when a field above is blank):
 
