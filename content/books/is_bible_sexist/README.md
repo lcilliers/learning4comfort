@@ -10,7 +10,7 @@ No book-specific editorial, formatting, translation, or citation rules have been
 
 - **TITLE:** Is the Bible Sexist?
 - **SUBTITLE:** How God Sees Woman 
-- **DESCRIPTION:** The treatment of woman is often questioned against Scripture attempting to ascribe our abhorrent behavior to the Bible. This is journey through Scripture's woman
+- **DESCRIPTION:** The treatment of woman is often questioned against Scripture attempting to ascribe our abhorrent behavior to the Bible. This is a journey through Scripture's woman
 
 Current values (for reference, set by the build when a field above is blank):
 
