@@ -52,4 +52,4 @@ Do not deploy the site publicly or claim legal compliance until the actual data 
 
 See [SOURCE-SETUP.md](SOURCE-SETUP.md) for the cross-repository handoff setup.
 
-The workflow publishes the site shell from `site/` together with approved pages and assets from `content/`. Files in `content/` take precedence if they have the same path as a site-shell file. Until published content arrives, the shell serves a simple preparation page.
+The workflow publishes the site shell from `site/` together with approved pages and assets from `content/`. Files in `content/` take precedence if they have the same path as a site-shell file. It builds a separate search index for each book from the assembled published HTML; inbox files, archives, and book instructions are not indexed. Until published content arrives, the shell serves a simple preparation page.

@@ -32,6 +32,7 @@ jobs:
           cp -R content/. _site/
           rm -f _site/.gitkeep
           find _site -type f -name README.md -delete
+          python scripts/build_book_search_indexes.py --site _site
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

@@ -46,9 +46,10 @@ This document records the agreed direction for the Learning4Comfort reading expe
 
 ## Search and progress behavior
 
-- Search the text of all published books and chapters from anywhere on the site.
-- Present results with the book and chapter title and a link to the relevant page. Do not require readers to use a reference-study workflow to reach a result.
-- Index only approved, published content. Exclude inbox files, archived originals, authoring instructions, and unpublished drafts.
+- Provide a site-wide search entry point for searching the text of all published books and chapters from anywhere on the site. Present results with the book and chapter title and a link to the relevant page.
+- Provide a search control on book opening and chapter pages that searches only that book's published pages. Present results with the page title, matching section, a short excerpt, and a direct link to the relevant section.
+- Build book-search indexes from the assembled published HTML at deployment time. Exclude inbox files, archives, authoring instructions, and unpublished drafts.
+- Book search must remain scoped to the current book, independently of site-wide search.
 - Save a separate reading position per book in the current browser's local storage. Do not transmit reading history.
 - If local storage is unavailable or cleared, pages must remain usable and display no false claim that progress was saved.
 - Account-based storage, cross-device sync, highlighting, and notes are not part of the current scope.

@@ -172,6 +172,92 @@ h1 {
   margin-top: 0.25rem;
 }
 
+.book-search {
+  margin: 2rem 0;
+  padding: 1.25rem 1.5rem;
+  border: 1px solid #dedbd2;
+  border-radius: 0.4rem;
+  background: #fbfaf6;
+}
+
+.book-search h2 {
+  margin: 0 0 0.75rem;
+  color: #2f506b;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.35rem;
+}
+
+.book-search label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-weight: 600;
+}
+
+.book-search-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.book-search input {
+  min-width: 0;
+  flex: 1 1 14rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid #8e969e;
+  border-radius: 0.25rem;
+  background: #fff;
+  color: #292d33;
+  font: inherit;
+}
+
+.book-search button {
+  padding: 0.65rem 1rem;
+  border: 1px solid #345a78;
+  border-radius: 0.25rem;
+  background: #345a78;
+  color: #fff;
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.book-search :focus-visible {
+  outline: 3px solid #7893aa;
+  outline-offset: 2px;
+}
+
+.book-search-results:not(:empty) {
+  margin-top: 1rem;
+}
+
+.book-search-result-list {
+  margin: 0;
+  padding-left: 1.5rem;
+}
+
+.book-search-result + .book-search-result {
+  margin-top: 1rem;
+}
+
+.book-search-result a {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.75rem;
+  color: #345a78;
+  text-underline-offset: 0.18em;
+}
+
+.book-search-section {
+  font-weight: 600;
+}
+
+.book-search-result p {
+  margin: 0.35rem 0 0;
+  color: #4d535b;
+  font-size: 0.95rem;
+  line-height: 1.55;
+}
+
 .article-contents a {
   color: #345a78;
   text-underline-offset: 0.18em;
@@ -448,4 +534,3 @@ h1 {
 .article-contents .contents-plain {
   padding-left: 0;
 }
-
