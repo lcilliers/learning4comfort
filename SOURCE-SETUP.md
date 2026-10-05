@@ -2,7 +2,7 @@
 
 `content/` is the destination for pages and assets explicitly selected for publication from `Bible_Projects`. The target repository owns the website, build, GitHub Pages deployment, and custom domain. It is an independent site, not a subset of the research repository.
 
-The source-side workflow at `Bible_Projects/.github/workflows/publish-learning4comfort-content.yml` copies files from `publishing/learning4comfort/site/` into this repository's `content/` directory. It does not copy the Bible_Projects repository, alter the target site's framework, or configure GitHub Pages.
+The source-side workflow at use the routine Copy-NarrativeToLearning4Comfort.ps1, in iba\app\ps\ to copy the inner being files to `publishing/learning4comfort/publication-inbox/the_inner_being` target site's framework, or configure GitHub Pages.
 
 ## Access setup
 
