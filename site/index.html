@@ -6,6 +6,7 @@
     <meta name="description" content="Learning4Comfort — a welcoming place for careful study and reading.">
     <title>Learning4Comfort</title>
     <link rel="stylesheet" href="/styles.css">
+    <script defer src="/reading-progress.js"></script>
   </head>
   <body>
     <header class="site-header">
@@ -19,6 +20,20 @@
       <p class="eyebrow">Learning4Comfort</p>
       <h1>A welcoming place to read and reflect.</h1>
       <p class="intro">Independent studies, gathered as books and made for thoughtful reading.</p>
+      <section class="home-search" aria-labelledby="home-search-heading">
+        <h2 id="home-search-heading">Search the books</h2>
+        <form class="global-search-entry" role="search" action="/search/" method="get">
+          <label for="home-search-query">Search terms</label>
+          <div class="global-search-controls">
+            <input id="home-search-query" name="q" type="search" autocomplete="off">
+            <button type="submit">Search</button>
+          </div>
+        </form>
+      </section>
+      <section class="continue-reading" data-reading-latest hidden aria-labelledby="continue-reading-heading">
+        <h2 id="continue-reading-heading">Continue reading</h2>
+        <p><a data-reading-resume-link></a></p>
+      </section>
       <section id="books" class="books" aria-labelledby="books-heading">
         <h2 id="books-heading">Studies</h2>
         <a class="book-card" href="/books/is_bible_sexist/">

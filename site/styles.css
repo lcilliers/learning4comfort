@@ -258,6 +258,138 @@ h1 {
   line-height: 1.55;
 }
 
+.home-search {
+  max-width: 38rem;
+  margin-top: 2.5rem;
+}
+
+.home-search h2 {
+  margin-bottom: 0.75rem;
+  color: #2f506b;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.4rem;
+}
+
+.continue-reading {
+  max-width: 38rem;
+  margin: 2rem 0 0;
+  padding-top: 1rem;
+  border-top: 1px solid #dedbd2;
+}
+
+.continue-reading h2,
+.reading-resume h2 {
+  margin: 0 0 0.5rem;
+  color: #2f506b;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.25rem;
+}
+
+.continue-reading a,
+.reading-resume a {
+  color: #345a78;
+  font-weight: 650;
+  text-underline-offset: 0.18em;
+}
+
+.reading-resume {
+  margin: 1.5rem 0;
+  padding: 1rem 0;
+  border-block: 1px solid #dedbd2;
+}
+
+.reading-resume button {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #8e969e;
+  border-radius: 0.25rem;
+  background: transparent;
+  color: #292d33;
+  font: inherit;
+  cursor: pointer;
+}
+
+.reading-resume :focus-visible {
+  outline: 3px solid #7893aa;
+  outline-offset: 2px;
+}
+
+.global-search,
+.global-search-entry {
+  max-width: 42rem;
+  margin: 1.5rem 0;
+}
+
+.global-search label,
+.global-search-entry label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-weight: 600;
+}
+
+.global-search-controls,
+.global-search-entry .global-search-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.global-search input,
+.global-search-entry input {
+  min-width: 0;
+  flex: 1 1 14rem;
+  padding: 0.7rem 0.75rem;
+  border: 1px solid #8e969e;
+  border-radius: 0.25rem;
+  background: #fff;
+  color: #292d33;
+  font: inherit;
+}
+
+.global-search button,
+.global-search-entry button {
+  padding: 0.7rem 1rem;
+  border: 1px solid #345a78;
+  border-radius: 0.25rem;
+  background: #345a78;
+  color: #fff;
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.global-search :focus-visible,
+.global-search-entry :focus-visible {
+  outline: 3px solid #7893aa;
+  outline-offset: 2px;
+}
+
+.global-search-result-list {
+  max-width: 48rem;
+  margin: 1.25rem 0;
+  padding-left: 1.5rem;
+}
+
+.global-search-result + .global-search-result {
+  margin-top: 1.25rem;
+}
+
+.global-search-result a {
+  color: #345a78;
+  font-weight: 650;
+  text-underline-offset: 0.18em;
+}
+
+.global-search-result p {
+  margin: 0.35rem 0 0;
+  color: #4d535b;
+  line-height: 1.55;
+}
+
+.global-search-result .global-search-section {
+  color: #2f506b;
+  font-weight: 600;
+}
+
 .article-contents a {
   color: #345a78;
   text-underline-offset: 0.18em;

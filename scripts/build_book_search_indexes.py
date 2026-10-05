@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build one client-side search index per published book."""
+"""Build client-side search indexes for each book and the whole site."""
 
 from __future__ import annotations
 
@@ -162,14 +162,65 @@ def add_book_search_widget(page_html: str, book_slug: str, index_url: str) -> st
     return page_html[:insertion_point] + "\n" + widget + page_html[insertion_point:]
 
 
+def add_global_search_link(page_html: str) -> str:
+    if 'href="/search/"' in page_html:
+        return page_html
+
+    navigation = re.search(
+        r'(<nav aria-label="Main navigation">)([\s\S]*?)(</nav>)', page_html
+    )
+    if navigation is None:
+        return page_html
+
+    return (
+        page_html[: navigation.end(2)]
+        + '        <a href="/search/">Search</a>\n'
+        + page_html[navigation.end(2) :]
+    )
+
+
+def add_reading_progress_script(page_html: str) -> str:
+    script = '<script defer src="/reading-progress.js"></script>'
+    if script in page_html:
+        return page_html
+    if "</head>" not in page_html:
+        raise ValueError("Book page is missing its closing head tag")
+    return page_html.replace("</head>", f"    {script}\n  </head>", 1)
+
+
+def add_reading_resume_widget(page_html: str, book_slug: str) -> str:
+    if "class=\"reading-resume\"" in page_html:
+        return page_html
+
+    widget = f"""\
+        <section class="reading-resume" data-reading-book="{book_slug}" hidden>
+          <h2>Continue reading</h2>
+          <p><a data-reading-resume-link></a></p>
+          <button type="button" data-reading-start-over>Start this book from the beginning</button>
+        </section>
+"""
+    article_heading = re.search(r'<header class="article-heading">[\s\S]*?</header>', page_html)
+    if article_heading is None:
+        raise ValueError("Book opening is missing its article heading")
+    return page_html[: article_heading.end()] + "\n" + widget + page_html[article_heading.end() :]
+
+
 def build_indexes(site_root: Path) -> int:
     books_root = site_root / "books"
     if not books_root.is_dir():
         raise FileNotFoundError(f"Published books directory not found: {books_root}")
 
     index_count = 0
+    global_documents = []
     for book_dir in sorted(path for path in books_root.iterdir() if path.is_dir()):
         book_slug = book_dir.name
+        book_title = book_slug.replace("_", " ").replace("-", " ").title()
+        opening_page = book_dir / "index.html"
+        if opening_page.is_file():
+            opening_parser = BookPageParser()
+            opening_parser.feed(opening_page.read_text(encoding="utf-8"))
+            book_title = str(opening_parser.result(book_title)["title"])
+
         documents = []
         pages = sorted(book_dir.rglob("*.html"), key=lambda page: page_sort_key(page, book_dir))
         for page in pages:
@@ -178,13 +229,13 @@ def build_indexes(site_root: Path) -> int:
             parser.feed(source_html)
             parsed = parser.result(page.parent.name.replace("-", " "))
             if parsed["sections"]:
-                documents.append(
-                    {
-                        "title": parsed["title"],
-                        "url": book_route(page, site_root),
-                        "sections": parsed["sections"],
-                    }
-                )
+                document = {
+                    "title": parsed["title"],
+                    "url": book_route(page, site_root),
+                    "sections": parsed["sections"],
+                }
+                documents.append(document)
+                global_documents.append({"book_title": book_title, **document})
 
             if (
                 '<header class="article-heading">' in source_html
@@ -203,6 +254,23 @@ def build_indexes(site_root: Path) -> int:
                 encoding="utf-8",
             )
             index_count += 1
+
+    global_index = {"version": 1, "documents": global_documents}
+    (site_root / "search-index.json").write_text(
+        json.dumps(global_index, ensure_ascii=False), encoding="utf-8"
+    )
+
+    for page in site_root.rglob("*.html"):
+        source_html = page.read_text(encoding="utf-8")
+        linked_html = add_global_search_link(source_html)
+        if page.is_relative_to(books_root):
+            relative_parts = page.relative_to(books_root).parts
+            book_slug = relative_parts[0]
+            linked_html = add_reading_progress_script(linked_html)
+            if len(relative_parts) == 2 and relative_parts[1] == "index.html":
+                linked_html = add_reading_resume_widget(linked_html, book_slug)
+        if linked_html != source_html:
+            page.write_text(linked_html, encoding="utf-8")
 
     return index_count
 
