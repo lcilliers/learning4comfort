@@ -6,7 +6,9 @@ Usage:
 Default source is publication-inbox/the_inner_being. Without --write it only reports
 which pages would change. Chapters not present in the source keep their published
 text; they are still used for titles, previous/next links and the opening-page
-contents. Held working notes at the foot of a chapter are never published.
+contents. A file named NN-00-... is chapter NN's opening page and NN-0x-... its
+sub-chapters; any chapter may have them. Held working notes at the foot of a
+chapter are never published.
 """
 import argparse
 import html
@@ -41,9 +43,16 @@ def route(name):
     if not m:
         raise ValueError(f"Unrecognised file name: {name}")
     a, b = m.groups()
-    if b is None:
+    # NN-00 is a chapter's opening page; NN-0x are its sub-chapters.
+    if b is None or b == "00":
         return "chapter-" + a
-    return "chapter-10" if b == "00" else "chapter-10-" + str(int(b))
+    return f"chapter-{a}-{int(b)}"
+
+
+def parent(r):
+    """The chapter a sub-chapter route belongs to, or None for a chapter."""
+    parts = r.split("-")
+    return "-".join(parts[:2]) if len(parts) > 2 else None
 
 
 def route_key(r):
@@ -140,6 +149,13 @@ def main():
 
     src = pathlib.Path(args.src)
     files = [p for p in src.glob("*.md") if not p.name.startswith("00-")]
+    routes = {}
+    for p in sorted(files):
+        routes.setdefault(route(p.name), []).append(p.name)
+    clashes = {r: n for r, n in routes.items() if len(n) > 1}
+    if clashes:
+        sys.exit("Source files share a page; remove the superseded one:\n"
+                 + "\n".join(f"  {r}: {', '.join(n)}" for r, n in clashes.items()))
     parsed = {route(p.name): parse(p) for p in files}
     titles = {d.name: published_title(d.name) for d in OUT.glob("chapter-*") if (d / "index.html").exists()}
     for r, (t, _, _) in parsed.items():
@@ -196,11 +212,11 @@ def main():
     # Opening-page contents
     items = []
     for r in order:
-        if r.startswith("chapter-10-") and r != "chapter-10":
+        if parent(r):
             continue
         li = f'<li><a href="{B}{r}/">{inline(titles[r])}</a>'
-        if r == "chapter-10":
-            subs = [s for s in order if s.startswith("chapter-10-")]
+        subs = [s for s in order if parent(s) == r]
+        if subs:
             li += ('\n<ol class="sub-contents">\n'
                    + "\n".join(f'<li><a href="{B}{s}/">{inline(titles[s])}</a></li>' for s in subs)
                    + "\n</ol>\n")
