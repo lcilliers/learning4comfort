@@ -10,12 +10,12 @@ Invoking this command is the author's approval to publish. Site-wide legal and p
 1. **Check the inbox.** List the files in `publication-inbox\<book>\` for every book folder. If nothing is there, say so and stop. Read each book's `content\books\<book>\README.md` and apply its rules and presentation overrides. Do not infer rules that are not written.
 
 2. **Convert.**
-   - `the_inner_being`: run `python scripts\publish_inner_being.py` for a dry run and review the list of changed pages. Then run it with `--write`. It converts the Markdown, drops the `00-index` file and any "Held" working notes, and rebuilds chapter contents, previous/next links and the opening-page contents. Chapters not in the inbox keep their published text.
+   - `the_inner_being`: run `python scripts\publish_inner_being.py` for a dry run and review the list of changed pages. Then run it with `--write`. It converts the Markdown, drops the `00-index` file and any "Held" working notes, and rebuilds chapter contents, previous/next links and the opening-page contents. A file named `NN-00-...` is chapter NN's opening page and `NN-0x-...` its sub-chapters; any chapter may have them. If it reports two source files for one page, stop and ask the author which is superseded. Chapters not in the inbox keep their published text.
    - Any other book has no converter yet. Stop and ask the author how it should be converted. Do not guess a structure.
 
 3. **Verify.** Spot-check that new or changed pages exist, that text matches the source, that heading anchors match the contents list, and that no "Held" or working-note text was published. Run `python -m unittest discover -s tests`.
 
-4. **Search indexes.** The deploy workflow runs `scripts\build_book_search_indexes.py` itself, so nothing is committed for search. To check locally, copy `site\` and `content\` into a temporary folder, remove the README files, run `python scripts\build_book_search_indexes.py --site <folder>`, confirm the book's `search-index.json` includes the new pages, and delete the temporary folder.
+4. **Search indexes.** The deploy workflow runs `scripts\build_book_search_indexes.py` itself, so nothing is committed for search. To check locally, copy the contents of `site\` and then of `content\` into one temporary folder (as the deploy workflow does), remove the README files, run `python scripts\build_book_search_indexes.py --site <folder>`, confirm the book's `search-index.json` includes the new pages, and delete the temporary folder.
 
 5. **Archive.** Copy each inbox file to `publication-archive\<book>\<yyyy-mm-dd>\`. Delete the inbox copy only after its SHA-256 hash matches. Never commit the inbox or archive; both are git-ignored.
 
