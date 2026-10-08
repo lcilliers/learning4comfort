@@ -4,16 +4,7 @@
   const maximumResults = 50;
   const indexes = new Map();
 
-  function normalize(value) {
-    return value
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .toLocaleLowerCase();
-  }
-
-  function termsFor(query) {
-    return normalize(query).match(/[\p{L}\p{N}]+/gu) || [];
-  }
+  const { parse, find, score, excerpt } = window.L4CSearch;
 
   function loadIndex(url) {
     if (!indexes.has(url)) {
@@ -31,20 +22,6 @@
       indexes.delete(url);
       throw error;
     });
-  }
-
-  function excerpt(text, terms) {
-    const folded = normalize(text);
-    const matchAt = Math.min(
-      ...terms.map((term) => {
-        const position = folded.indexOf(term);
-        return position < 0 ? Number.MAX_SAFE_INTEGER : position;
-      }),
-    );
-    const start =
-      matchAt === Number.MAX_SAFE_INTEGER ? 0 : Math.max(0, matchAt - 70);
-    const end = Math.min(text.length, start + 220);
-    return `${start > 0 ? "…" : ""}${text.slice(start, end)}${end < text.length ? "…" : ""}`;
   }
 
   function makeResult(result) {
@@ -73,9 +50,13 @@
   }
 
   async function search(form, results, query) {
-    const terms = [...new Set(termsFor(query))];
-    if (!terms.length) {
-      results.textContent = "Enter a word or phrase to search this book.";
+    const parsed = parse(query);
+    if (parsed.kind === "empty") {
+      results.textContent = "Enter a word, phrase or Bible reference to search this book.";
+      return;
+    }
+    if (parsed.kind === "invalid") {
+      results.textContent = `No matches found. ${parsed.message}`;
       return;
     }
 
@@ -87,38 +68,32 @@
       for (const page of index.documents) {
         for (const section of page.sections) {
           const text = `${page.title} ${section.heading} ${section.text}`;
-          const folded = normalize(text);
-          if (!terms.every((term) => folded.includes(term))) {
+          if (find(text, parsed) < 0) {
             continue;
           }
+          const body = section.text || text;
           const fragment = section.id ? `#${encodeURIComponent(section.id)}` : "";
           matches.push({
             title: page.title,
             heading: section.heading,
             url: `${page.url}${fragment}`,
-            snippet: excerpt(section.text || text, terms),
+            snippet: excerpt(body, find(body, parsed)),
             order: matches.length,
           });
         }
       }
 
-      matches.sort((left, right) => {
-        const leftScore = terms.reduce(
-          (score, term) => score + (normalize(left.snippet).includes(term) ? 1 : 0),
-          0,
-        );
-        const rightScore = terms.reduce(
-          (score, term) => score + (normalize(right.snippet).includes(term) ? 1 : 0),
-          0,
-        );
-        return rightScore - leftScore || left.order - right.order;
-      });
+      matches.sort(
+        (left, right) =>
+          score(right.snippet, parsed) - score(left.snippet, parsed) || left.order - right.order,
+      );
 
       results.replaceChildren();
       const summary = document.createElement("p");
+      const scope = parsed.kind === "reference" ? ` citing ${parsed.label}` : "";
       summary.textContent = matches.length
-        ? `${matches.length} ${matches.length === 1 ? "result" : "results"} in this book.`
-        : "No matches found in this book.";
+        ? `${matches.length} ${matches.length === 1 ? "result" : "results"}${scope} in this book.`
+        : `No matches found${scope} in this book.`;
       results.append(summary);
 
       if (matches.length) {

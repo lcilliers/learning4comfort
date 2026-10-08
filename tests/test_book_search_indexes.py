@@ -120,7 +120,10 @@ class BookSearchIndexTests(unittest.TestCase):
             )
             for page in (opening, chapter):
                 published_html = page.read_text(encoding="utf-8")
-                self.assertIn('src="/book-search.js"', published_html)
+                self.assertLess(
+                    published_html.index('src="/search-match.js"'),
+                    published_html.index('src="/book-search.js"'),
+                )
                 self.assertIn('class="book-search"', published_html)
                 self.assertIn('data-index-url="/books/sample-book/search-index.json"', published_html)
                 self.assertIn('href="/search/">Search</a>', published_html)

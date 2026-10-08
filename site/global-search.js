@@ -2,22 +2,7 @@
   "use strict";
 
   const maximumResults = 100;
-  const normalize = (value) =>
-    value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase();
-  const termsFor = (query) => normalize(query).match(/[\p{L}\p{N}]+/gu) || [];
-
-  function excerpt(text, terms) {
-    const folded = normalize(text);
-    const matchAt = Math.min(
-      ...terms.map((term) => {
-        const position = folded.indexOf(term);
-        return position < 0 ? Number.MAX_SAFE_INTEGER : position;
-      }),
-    );
-    const start = matchAt === Number.MAX_SAFE_INTEGER ? 0 : Math.max(0, matchAt - 70);
-    const end = Math.min(text.length, start + 220);
-    return `${start > 0 ? "…" : ""}${text.slice(start, end)}${end < text.length ? "…" : ""}`;
-  }
+  const { parse, find, excerpt } = window.L4CSearch;
 
   function makeResult(result) {
     const item = document.createElement("li");
@@ -42,9 +27,13 @@
   }
 
   async function search(form, results, query) {
-    const terms = [...new Set(termsFor(query))];
-    if (!terms.length) {
-      results.textContent = "Enter a word or phrase to search all books.";
+    const parsed = parse(query);
+    if (parsed.kind === "empty") {
+      results.textContent = "Enter a word, phrase or Bible reference to search all books.";
+      return;
+    }
+    if (parsed.kind === "invalid") {
+      results.textContent = `No matches found. ${parsed.message}`;
       return;
     }
 
@@ -60,17 +49,17 @@
       for (const page of index.documents) {
         for (const section of page.sections) {
           const text = `${page.book_title} ${page.title} ${section.heading} ${section.text}`;
-          const folded = normalize(text);
-          if (!terms.every((term) => folded.includes(term))) {
+          if (find(text, parsed) < 0) {
             continue;
           }
+          const body = section.text || text;
           matches.push({
             book_title: page.book_title,
             title: page.title,
             url: page.url,
             section_id: section.id,
             heading: section.heading,
-            snippet: excerpt(section.text || text, terms),
+            snippet: excerpt(body, find(body, parsed)),
             order: matches.length,
           });
         }
@@ -78,9 +67,10 @@
 
       results.replaceChildren();
       const summary = document.createElement("p");
+      const scope = parsed.kind === "reference" ? ` citing ${parsed.label}` : "";
       summary.textContent = matches.length
-        ? `${matches.length} ${matches.length === 1 ? "result" : "results"} across ${new Set(matches.map((match) => match.book_title)).size} ${new Set(matches.map((match) => match.book_title)).size === 1 ? "book" : "books"}.`
-        : "No matches found across the published books.";
+        ? `${matches.length} ${matches.length === 1 ? "result" : "results"}${scope} across ${new Set(matches.map((match) => match.book_title)).size} ${new Set(matches.map((match) => match.book_title)).size === 1 ? "book" : "books"}.`
+        : `No matches found${scope} across the published books.`;
       results.append(summary);
 
       if (matches.length) {

@@ -130,10 +130,13 @@ def add_book_search_widget(page_html: str, book_slug: str, index_url: str) -> st
     if 'class="book-search"' in page_html:
         return page_html
 
-    search_script = '<script defer src="/book-search.js"></script>'
+    search_scripts = (
+        '<script defer src="/search-match.js"></script>\n'
+        '    <script defer src="/book-search.js"></script>'
+    )
     if "</head>" not in page_html:
         raise ValueError("Book page is missing its closing head tag")
-    page_html = page_html.replace("</head>", f"    {search_script}\n  </head>", 1)
+    page_html = page_html.replace("</head>", f"    {search_scripts}\n  </head>", 1)
 
     input_id = f"book-search-{book_slug}"
     widget = f"""\
