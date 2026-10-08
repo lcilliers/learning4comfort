@@ -19,7 +19,7 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 OUT = ROOT / "content" / "books" / "the_inner_being"
 B = "/books/the_inner_being/"
-HELD = ("## Held", "*Held (working note")
+HELD = ("## Held", "*Held (working note", "*Working note, not part of the narrative text")
 
 
 def esc(s):
@@ -73,7 +73,13 @@ def parse(path):
             out.append(f"{pad}<p>{inline(' '.join(para))}</p>")
             para = []
         if lst:
-            out.append(f"{pad}<{ltype}>" + "".join(f"<li>{inline(x)}</li>" for x in lst) + f"</{ltype}>")
+            def li(text, sub):
+                if not sub:
+                    return f"<li>{inline(text)}</li>"
+                tag = sub[0][0]
+                return (f"<li>{inline(text)}<{tag}>"
+                        + "".join(f"<li>{inline(x)}</li>" for _, x in sub) + f"</{tag}></li>")
+            out.append(f"{pad}<{ltype}>" + "".join(li(t, s) for t, s in lst) + f"</{ltype}>")
             lst, ltype = [], None
         if quote:
             out.append(f"{pad}<blockquote><p>{inline(' '.join(quote))}</p></blockquote>")
@@ -103,19 +109,24 @@ def parse(path):
                 h2s.append((sid, text))
             out.append(f'{pad}<h{level} id="{sid}">{inline(text)}</h{level}>')
             continue
+        # One level of nesting: an indented item belongs to the item above it.
+        m = re.match(r"^\s+(?:([-*])|\d+\.) (.+)", ln)
+        if m and lst:
+            lst[-1][1].append(("ul" if m.group(1) else "ol", m.group(2)))
+            continue
         m = re.match(r"^[-*] (.+)", ln)
         if m:
             if para or quote or ltype == "ol":
                 flush()
             ltype = "ul"
-            lst.append(m.group(1))
+            lst.append((m.group(1), []))
             continue
         m = re.match(r"^\d+\. (.+)", ln)
         if m:
             if para or quote or ltype == "ul":
                 flush()
             ltype = "ol"
-            lst.append(m.group(1))
+            lst.append((m.group(1), []))
             continue
         m = re.match(r"^> ?(.*)", ln)
         if m:
