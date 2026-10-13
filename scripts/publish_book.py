@@ -61,6 +61,41 @@ def route_key(r):
     return tuple(int(p) for p in parts) if len(parts) > 1 else (int(parts[0]), 0)
 
 
+VERSIONED = re.compile(r"-v(\d+)-(\d{8})\.md$")
+
+
+def pick_sources(files):
+    """One source file per page.
+
+    A chapter file can be renamed between versions (for example 11-patterns-of-the-inner-life-v30
+    becoming 11-other-sides-of-the-inner-being-v31), so the inbox can hold two files for the same
+    page. The page number decides the page; the file with the later date, then the higher version,
+    is the current one. Returns (chosen files, [(superseded name, chosen name)], {page: names}
+    for clashes that cannot be decided: a file without -vN-YYYYMMDD, or two with the same date
+    and version).
+    """
+    routes = {}
+    for p in sorted(files, key=lambda p: p.name):
+        routes.setdefault(route(p.name), []).append(p)
+    chosen, superseded, undecided = [], [], {}
+    for r, ps in routes.items():
+        if len(ps) == 1:
+            chosen.append(ps[0])
+            continue
+        keys = [VERSIONED.search(p.name) for p in ps]
+        if not all(keys):
+            undecided[r] = [p.name for p in ps]
+            continue
+        ranked = sorted(zip(ps, keys), key=lambda pk: (pk[1].group(2), int(pk[1].group(1))), reverse=True)
+        top, second = ranked[0][1], ranked[1][1]
+        if (top.group(2), int(top.group(1))) == (second.group(2), int(second.group(1))):
+            undecided[r] = [p.name for p in ps]
+            continue
+        chosen.append(ranked[0][0])
+        superseded += [(p.name, ranked[0][0].name) for p, _ in ranked[1:]]
+    return chosen, superseded, undecided
+
+
 def parse(path):
     lines = path.read_text(encoding="utf-8").splitlines()
     title = lines[0][2:].strip()
@@ -96,9 +131,18 @@ def parse(path):
                        + "</table></div>")
             table = []
 
+    held = False
     for ln in lines[1:]:
+        # A working note runs to the next "## " section heading (or the end), not
+        # always to the end: it can close one section with the text going on after it.
         if ln.startswith(HELD):
-            break
+            flush()
+            held = True
+            continue
+        if held:
+            if not re.match(r"^## ", ln):
+                continue
+            held = False
         if re.match(r"^\s*(---|\*\*\*)\s*$", ln):
             flush()
             out.append(f"{pad}<hr>")
@@ -187,13 +231,13 @@ def main():
     if not src.is_dir():
         sys.exit(f"No source folder at {src}")
     files = [p for p in src.glob("*.md") if not p.name.startswith("00-")]
-    routes = {}
-    for p in sorted(files):
-        routes.setdefault(route(p.name), []).append(p.name)
-    clashes = {r: n for r, n in routes.items() if len(n) > 1}
-    if clashes:
-        sys.exit("Source files share a page; remove the superseded one:\n"
-                 + "\n".join(f"  {r}: {', '.join(n)}" for r, n in clashes.items()))
+    files, superseded, undecided = pick_sources(files)
+    if undecided:
+        sys.exit("Source files share a page and the newer one cannot be told from the names; "
+                 "remove the superseded one:\n"
+                 + "\n".join(f"  {r}: {', '.join(n)}" for r, n in undecided.items()))
+    for old, new in superseded:
+        print(f"SUPERSEDED {old} (page {route(new)} is built from {new})")
     parsed = {route(p.name): parse(p) for p in files}
     titles = {d.name: published_title(d.name) for d in OUT.glob("chapter-*") if (d / "index.html").exists()}
     for r, (t, _, _) in parsed.items():
