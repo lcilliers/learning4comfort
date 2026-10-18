@@ -9,7 +9,8 @@ for every chapter. Default source is publication-inbox/BOOK. Without --write it
 only reports which pages would change. Chapters not present in the source keep their published
 text; they are still used for titles, previous/next links and the opening-page
 contents. A file named NN-00-... is chapter NN's opening page and NN-0x-... its
-sub-chapters; any chapter may have them. Held working notes at the foot of a
+sub-chapters; any chapter may have them. A 00-... file other than 00-index-...
+(the author's status file) is an introduction, published before Chapter 1. Held working notes at the foot of a
 chapter are never published.
 """
 import argparse
@@ -230,7 +231,9 @@ def main():
     src = pathlib.Path(args.src or ROOT / "publication-inbox" / args.book)
     if not src.is_dir():
         sys.exit(f"No source folder at {src}")
-    files = [p for p in src.glob("*.md") if not p.name.startswith("00-")]
+    # 00-index-... is the author's status file and is never published; any other
+    # 00-... file (an introduction) becomes page chapter-00, before Chapter 1.
+    files = [p for p in src.glob("*.md") if not p.name.startswith("00-index")]
     files, superseded, undecided = pick_sources(files)
     if undecided:
         sys.exit("Source files share a page and the newer one cannot be told from the names; "
