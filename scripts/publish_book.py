@@ -22,6 +22,9 @@ import sys
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 OUT = B = None  # set from --book in main()
 HELD = ("## Held", "*Held (working note", "*Working note, not part of the narrative text")
+# This marker begins a note that is one block: it ends at the next blank line,
+# and text after it is published. The others run to the next "## " heading.
+NOTE = "*Working note, not part of the narrative text"
 
 
 def esc(s):
@@ -132,18 +135,20 @@ def parse(path):
                        + "</table></div>")
             table = []
 
-    held = False
+    held = None  # "section": skip to the next "## " heading; "block": to a blank line
     for ln in lines[1:]:
-        # A working note runs to the next "## " section heading (or the end), not
-        # always to the end: it can close one section with the text going on after it.
-        if ln.startswith(HELD):
+        # Notes are never published. A Held section or note runs to the next "## "
+        # heading (or the end); a working note is its own block, so the text after
+        # it, in the same section, is published.
+        if held != "section" and ln.startswith(HELD):
             flush()
-            held = True
+            held = "block" if ln.startswith(NOTE) else "section"
             continue
         if held:
-            if not re.match(r"^## ", ln):
+            if re.match(r"^## ", ln) or (held == "block" and not ln.strip()):
+                held = None
+            else:
                 continue
-            held = False
         if re.match(r"^\s*(---|\*\*\*)\s*$", ln):
             flush()
             out.append(f"{pad}<hr>")
